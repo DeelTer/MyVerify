@@ -16,21 +16,24 @@ settings:
   bot:
     token: "ODA1MDUzNzE5MDEyMDQ4OTA2.YBVSsw.6uTaoeVKrkVZearVKQTsZ8_L4Dc"
 
-#Type your channels id's here
+  #Type your channels id's here
   channels:
     #Can be "PRIVATE"
     verify: "805152627271925810"
     logs: ""
 
-#Roles that will be issued after verification
-#roles:
-#  - "ID1"
-#  - "ID2"
-  roles:
-    - "ID1"
-    - "ID2"
+  #Nickname that will be issued after verification
+  nickname:
+    enable: false
+    updater-enable: true
 
-  nickname-updater: true
+  #Roles that will be issued after verification
+  roles:
+    enable: true
+    id:
+      - "ID1"
+      - "ID2"
+
 messages:
   discord:
     player-offline: "Такого `игрока` не существует,\nлибо вы неправильно ввели ник"
@@ -38,3 +41,4 @@ messages:
     application-exists: "Заявка на `верификацию` уже была \nсоздана другим игроком"
     application-created: "Вы успешно создали заявку на верификацию \nПожалуйста, подтвердите её `в игре`"
 
+debug: true

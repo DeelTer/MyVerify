@@ -3,8 +3,8 @@ package ru.deelter.verify.discord;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import ru.deelter.verify.Config;
-import ru.deelter.verify.discord.events.ReactionListener;
 import ru.deelter.verify.discord.events.ReconnectListener;
 import ru.deelter.verify.discord.events.VerifyListener;
 
@@ -13,6 +13,7 @@ import javax.security.auth.login.LoginException;
 public class MyBot {
 
     private static JDA bot;
+    private static Guild guild;
 
     public static void load() {
 
@@ -25,13 +26,18 @@ public class MyBot {
         } catch (LoginException | InterruptedException e) {
             e.printStackTrace();
         }
+        guild = bot.getGuildById(Config.GUILD_ID);
     }
 
     public static void unload() {
         bot.shutdown();
     }
 
-    public static JDA get() {
+    public static JDA getBot() {
         return bot;
+    }
+
+    public static Guild getGuild() {
+        return guild;
     }
 }

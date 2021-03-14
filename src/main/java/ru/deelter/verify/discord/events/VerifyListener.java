@@ -7,14 +7,17 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.deelter.verify.Config;
 import ru.deelter.verify.utils.Colors;
+import ru.deelter.verify.utils.Console;
 import ru.deelter.verify.utils.player.Applications;
 import ru.deelter.verify.utils.player.DiscordPlayer;
 
@@ -38,8 +41,7 @@ public class VerifyListener extends ListenerAdapter {
                 return;
 
             event.getMessage().delete().queue();
-        }
-        else if (event.getChannelType() != ChannelType.PRIVATE)
+        } else if (event.getChannelType() != ChannelType.PRIVATE)
             return;
 
         Player player = Bukkit.getPlayerExact(name);
@@ -74,5 +76,6 @@ public class VerifyListener extends ListenerAdapter {
 
         MessageEmbed notify = new EmbedBuilder().setDescription(Config.MSG_APPLICATION_CREATED).setColor(Color.green).build();
         channel.sendMessage(notify).queue(msg -> msg.delete().queueAfter(5, TimeUnit.SECONDS));
+        Console.debug("Игрок " + player.getName() + " создал заявку на верификацию");
     }
 }
