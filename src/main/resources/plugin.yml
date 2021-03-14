@@ -1,0 +1,14 @@
+name: VerifyReload
+version: ${project.version}
+main: ru.deelter.verify.VerifyReload
+api-version: 1.16
+
+prefix: VerifyReload
+authors: [ DeelTer ]
+description: Verify your account
+website: https://vk.com/deelter
+
+commands:
+  discordverify:
+    aliases: [verf, ds, verify]
+    usage: /<command>

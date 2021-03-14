@@ -1,0 +1,40 @@
+#########################################
+#                                       #
+#               VerifyReload            #
+#                                       #
+#########################################
+
+#Contact with me:
+#
+#VK: vk.com/deelter
+#DISCORD: DeelTer#4782
+#TWITTER: twitter.com/roma200315
+#YOUTUBE: www.youtube.com/channel/UCRACU2JfOfClrlEHImv5pYw
+
+settings:
+  guild: "805053383504691220"
+  bot:
+    token: "ODA1MDUzNzE5MDEyMDQ4OTA2.YBVSsw.6uTaoeVKrkVZearVKQTsZ8_L4Dc"
+
+#Type your channels id's here
+  channels:
+    #Can be "PRIVATE"
+    verify: "805152627271925810"
+    logs: ""
+
+#Roles that will be issued after verification
+#roles:
+#  - "ID1"
+#  - "ID2"
+  roles:
+    - "ID1"
+    - "ID2"
+
+  nickname-updater: true
+messages:
+  discord:
+    player-offline: "Такого `игрока` не существует,\nлибо вы неправильно ввели ник"
+    account-exists: "Данный `игрок` уже зарегистрирован \nвведите другой ник"
+    application-exists: "Заявка на `верификацию` уже была \nсоздана другим игроком"
+    application-created: "Вы успешно создали заявку на верификацию \nПожалуйста, подтвердите её `в игре`"
+
