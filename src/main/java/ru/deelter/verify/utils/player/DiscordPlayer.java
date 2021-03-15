@@ -66,10 +66,12 @@ public class DiscordPlayer {
 		this.time = time;
 	}
 
+	/** Is player linked */
 	public boolean isLinked() {
 		return id != 0;
 	}
 
+	/** Get online player */
 	public Player getPlayer() {
 		return Bukkit.getPlayer(uuid);
 	}
@@ -82,6 +84,26 @@ public class DiscordPlayer {
 			}
 		}
 		return null;
+	}
+
+	/** Get player roles in Discord */
+	public List<Role> getRoles() {
+		return getMember().getRoles();
+	}
+
+	/** Set player role in Discord */
+	public void setRole(String... roleIds) {
+		if (getMember() == null)
+			return;
+
+		if (getMember().isOwner())
+			return;
+
+		Guild guild = MyBot.getGuild();
+		for (String roleId : roleIds) {
+			Role role = guild.getRoleById(roleId);
+			guild.addRoleToMember(id, role).queue();
+		}
 	}
 
 	/** Set Discord nickname to ... */
@@ -110,24 +132,6 @@ public class DiscordPlayer {
 	public void ban(int delDays, String reason) {
 		Console.debug("&fБаним игрока" + getPlayer().getName());
 		getMember().ban(delDays, reason).queue();
-	}
-
-	/** Get player roles in Discord */
-	public List<Role> getRoles() {
-		return MyBot.getGuild().getMemberById(id).getRoles();
-	}
-
-	/** Set player role in Discord */
-	public void setRole(String roleId) {
-		if (getMember() == null)
-			return;
-
-		if (getMember().isOwner())
-			return;
-
-		Guild guild = MyBot.getGuild();
-		Role role = guild.getRoleById(roleId);
-		guild.addRoleToMember(id, role).queue();
 	}
 
 	/** Get Discord player by PLAYER */

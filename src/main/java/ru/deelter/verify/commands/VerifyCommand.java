@@ -72,10 +72,8 @@ public class VerifyCommand implements CommandExecutor {
 
             /* Roles setup */
             if (Config.ROLES_ENABLE) {
-                for (String roleId : Config.ROLES) {
-                    Console.debug("Устанавливаем роль игроку " + player.getName());
-                    dPlayer.setRole(roleId);
-                }
+                Console.debug("Устанавливаем роль игроку " + player.getName());
+                Config.ROLES.forEach(roleId -> dPlayer.setRole(roleId));
             }
 
             /* Nickname setup */

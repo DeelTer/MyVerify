@@ -29,6 +29,7 @@ public class PlayerIdentification implements Listener {
 		if (!dPlayer.isLinked())
 			return;
 
+		Console.debug("Информация: " + ", " + dPlayer.getIp() + ", " + dPlayer.getId());
 		if (!Config.NICKNAME_UPDATER_ENABLE)
 			return;
 
