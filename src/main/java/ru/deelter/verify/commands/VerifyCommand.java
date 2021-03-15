@@ -18,9 +18,9 @@ import ru.deelter.verify.utils.player.DiscordPlayer;
 
 import java.awt.*;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class VerifyCommand implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length < 1) {
@@ -30,7 +30,7 @@ public class VerifyCommand implements CommandExecutor {
 
         /* Configuration reload */
         if (args[0].equalsIgnoreCase("RELOAD")) {
-            Console.log("&6Конфигурация&f успешно перезагружена");
+            sender.sendMessage(Colors.set("&6Конфигурация&f успешно перезагружена"));
             Config.reload();
         }
 
@@ -38,15 +38,20 @@ public class VerifyCommand implements CommandExecutor {
             return true;
 
         Player player = (Player) sender;
-        /* sending message */
         if (args[0].equalsIgnoreCase("UNLINK")) {
-            MessageEmbed message = new EmbedBuilder().setDescription("Ваш аккаунт успешно `отвязан`").setColor(Color.red).build();
             DiscordPlayer discordPlayer = DiscordPlayer.get(player.getUniqueId());
+            if (!discordPlayer.isLinked()) {
+                sender.sendMessage(Colors.set("&6Ваш дискорд&f не привязан"));
+                return true;
+            }
+
+            MessageEmbed message = new EmbedBuilder().setDescription("Ваш аккаунт успешно `отвязан` от дискорда \nВы сможете привязать его повторно тем же способом").setColor(Color.red).build();
             discordPlayer.sendMessage(message);
-            discordPlayer.unregister();
+            discordPlayer.unregister(true);
             return true;
         }
 
+        /* Accept application */
         if (args[0].equalsIgnoreCase("ACCEPT")) {
             UUID uuid = player.getUniqueId();
             if (!Applications.has(uuid)) {
@@ -56,7 +61,7 @@ public class VerifyCommand implements CommandExecutor {
 
             String ip = player.getAddress().getHostName();
             long id = Applications.get(uuid), time = System.currentTimeMillis();
-            DiscordPlayer dPlayer = DiscordPlayer.get(player);
+            DiscordPlayer dPlayer = DiscordPlayer.get(uuid);
             dPlayer.setTime(time);
             dPlayer.setId(id);
             dPlayer.setIp(ip);
@@ -76,7 +81,7 @@ public class VerifyCommand implements CommandExecutor {
             /* Nickname setup */
             if (Config.NICKNAME_ENABLE) {
                 Console.debug("Изменяем ник игроку " + player.getName());
-                dPlayer.getMember().modifyNickname(player.getName());
+                dPlayer.setName(player.getName());
             }
 
             Console.debug("Игрок " + player.getName() + " верифицирован");

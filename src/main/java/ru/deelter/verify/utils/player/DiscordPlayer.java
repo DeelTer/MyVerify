@@ -29,8 +29,7 @@ public class DiscordPlayer {
 	private final UUID uuid;
 	private String ip;
 
-	private long id;
-	private long time;
+	private long id, time;
 
 	public DiscordPlayer(UUID uuid) {
 		this.uuid = uuid;
@@ -79,6 +78,14 @@ public class DiscordPlayer {
 		return MyBot.getGuild().getMemberById(id);
 	}
 
+	/** Set Discord nickname to ... */
+	public void setName(String name) {
+		if (getMember().isOwner())
+			return;
+
+		getMember().modifyNickname(name);
+	}
+
 	/** Send message in Discord */
 	public void sendMessage(String message) {
 		sendMessage(new EmbedBuilder().setDescription(message).build());
@@ -103,6 +110,9 @@ public class DiscordPlayer {
 
 	/** Set player role in Discord */
 	public void setRole(String roleId) {
+		if (getMember().isOwner())
+			return;
+
 		Guild guild = MyBot.getGuild();
 		Role role = guild.getRoleById(roleId);
 		guild.addRoleToMember(id, role).queue();
@@ -140,6 +150,7 @@ public class DiscordPlayer {
 				ResultSet rs = ps.executeQuery();
 				while (rs.next()) {
 					this.id = rs.getLong("ID");
+					this.ip = rs.getString("IP");
 					this.time = rs.getLong("TIME");
 				}
 			} catch (SQLException e) {
@@ -151,15 +162,17 @@ public class DiscordPlayer {
 	}
 
 	/** Unregister player and remove him from Database */
-	public void unregister() {
-		Bukkit.getScheduler().runTaskAsynchronously(VerifyReload.getInstance(), () -> {
-			String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
-			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-				ps.executeUpdate();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
+	public void unregister(boolean deleteFromDB) {
+		if (deleteFromDB) {
+			Bukkit.getScheduler().runTaskAsynchronously(VerifyReload.getInstance(), () -> {
+				String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
+				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+					ps.executeUpdate();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			});
+		}
 		players.remove(uuid);
 	}
 

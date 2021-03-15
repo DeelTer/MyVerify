@@ -16,7 +16,6 @@ public class MyBot {
     private static Guild guild;
 
     public static void load() {
-
         JDABuilder builder = JDABuilder.createDefault(Config.TOKEN);
         builder.setActivity(Activity.playing("vk.com/deelter"));
         builder.addEventListeners(new VerifyListener(), new ReconnectListener());
@@ -27,6 +26,8 @@ public class MyBot {
             e.printStackTrace();
         }
         guild = bot.getGuildById(Config.GUILD_ID);
+        guild.loadMembers();
+
     }
 
     public static void unload() {

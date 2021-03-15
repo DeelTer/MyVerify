@@ -37,9 +37,8 @@ public class Config {
         DEBUG = config.getBoolean("debug");
 
         ConfigurationSection settings = config.getConfigurationSection("settings");
-        GUILD_ID = settings.getString("guild");
-
         ConfigurationSection bot = settings.getConfigurationSection("bot");
+        GUILD_ID = bot.getString("guild");
         TOKEN = bot.getString("token");
 
         ConfigurationSection channels = settings.getConfigurationSection("channels");
