@@ -74,16 +74,25 @@ public class DiscordPlayer {
 		return Bukkit.getPlayer(uuid);
 	}
 
+	/** Get Discord member */
 	public Member getMember() {
-		return MyBot.getGuild().getMemberById(id);
+		for (Member member : MyBot.getGuild().loadMembers().get()) {
+			if (id == member.getIdLong()) {
+				return member;
+			}
+		}
+		return null;
 	}
 
 	/** Set Discord nickname to ... */
 	public void setName(String name) {
+		if (getMember() == null)
+			return;
+
 		if (getMember().isOwner())
 			return;
 
-		getMember().modifyNickname(name);
+		getMember().modifyNickname(name).queue();
 	}
 
 	/** Send message in Discord */
@@ -110,6 +119,9 @@ public class DiscordPlayer {
 
 	/** Set player role in Discord */
 	public void setRole(String roleId) {
+		if (getMember() == null)
+			return;
+
 		if (getMember().isOwner())
 			return;
 
@@ -128,23 +140,8 @@ public class DiscordPlayer {
 		return players.containsKey(uuid) ? players.get(uuid) : new DiscordPlayer(uuid).register();
 	}
 
-	public static DiscordPlayer getOffline(UUID uuid) {
-		String sql = "SELECT 1 FROM ACCOUNTS WHERE UUID = `" + uuid + "`;";
-		try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-			ResultSet rs = ps.executeQuery();
-			long id = rs.getLong("ID"), time = rs.getLong("TIME");
-			String ip = rs.getString("IP");
-
-			return new DiscordPlayer(uuid, id, ip, time);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	/** Register Discord player */
 	public DiscordPlayer register() {
-		Bukkit.getScheduler().runTaskAsynchronously(VerifyReload.getInstance(), () -> {
 			String sql = "SELECT * FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
 			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 				ResultSet rs = ps.executeQuery();
@@ -156,14 +153,13 @@ public class DiscordPlayer {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		});
 		players.putIfAbsent(uuid, this);
 		return this;
 	}
 
 	/** Unregister player and remove him from Database */
-	public void unregister(boolean deleteFromDB) {
-		if (deleteFromDB) {
+	public void unregister(boolean needRemoveFromBD) {
+		if (needRemoveFromBD) {
 			Bukkit.getScheduler().runTaskAsynchronously(VerifyReload.getInstance(), () -> {
 				String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
 				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {

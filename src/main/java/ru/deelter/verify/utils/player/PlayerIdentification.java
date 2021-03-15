@@ -19,10 +19,7 @@ public class PlayerIdentification implements Listener {
 	@EventHandler
 	public void onPreJoin(AsyncPlayerPreLoginEvent e) {
 		UUID uuid = e.getUniqueId();
-		DiscordPlayer dPlayer = new DiscordPlayer(uuid);
-		dPlayer.register();
-
-		Console.debug("Информация: " + uuid.toString() + ", " + dPlayer.getIp() + ", " + dPlayer.getId());
+		new DiscordPlayer(uuid).register();
 	}
 
 	@EventHandler

@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import ru.deelter.verify.Config;
 import ru.deelter.verify.discord.events.ReconnectListener;
 import ru.deelter.verify.discord.events.VerifyListener;
@@ -16,9 +17,10 @@ public class MyBot {
     private static Guild guild;
 
     public static void load() {
-        JDABuilder builder = JDABuilder.createDefault(Config.TOKEN);
-        builder.setActivity(Activity.playing("vk.com/deelter"));
-        builder.addEventListeners(new VerifyListener(), new ReconnectListener());
+        JDABuilder builder = JDABuilder.createDefault(Config.TOKEN)
+                .setActivity(Activity.playing("vk.com/deelter"))
+                .addEventListeners(new VerifyListener(), new ReconnectListener())
+                .setEnabledIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         try {
             bot = builder.build();
             bot.awaitReady();
@@ -26,8 +28,6 @@ public class MyBot {
             e.printStackTrace();
         }
         guild = bot.getGuildById(Config.GUILD_ID);
-        guild.loadMembers();
-
     }
 
     public static void unload() {
