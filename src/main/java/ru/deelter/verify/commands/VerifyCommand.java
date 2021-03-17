@@ -9,7 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import ru.deelter.verify.Config;
-import ru.deelter.verify.VerifyReload;
+import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.api.PlayerVerificationEvent;
 import ru.deelter.verify.utils.Colors;
 import ru.deelter.verify.utils.Console;
@@ -48,6 +48,7 @@ public class VerifyCommand implements CommandExecutor {
             MessageEmbed message = new EmbedBuilder().setDescription("Ваш аккаунт успешно `отвязан` от дискорда \nВы сможете привязать его повторно тем же способом").setColor(Color.red).build();
             discordPlayer.sendMessage(message);
             discordPlayer.unregister(true);
+            sender.sendMessage(Colors.set("&6Вы отвязали&f свой дискорд"));
             return true;
         }
 
@@ -85,7 +86,7 @@ public class VerifyCommand implements CommandExecutor {
             Console.debug("Игрок " + player.getName() + " верифицирован");
 
             /* Call event for api */
-            Bukkit.getScheduler().scheduleSyncDelayedTask(VerifyReload.getInstance(), () -> {
+            Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> {
                 PlayerVerificationEvent event = new PlayerVerificationEvent(player, ip, id, time);
                 Bukkit.getPluginManager().callEvent(event);
             });

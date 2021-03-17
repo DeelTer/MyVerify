@@ -15,7 +15,7 @@ public class ReconnectListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         Member member = event.getMember();
-        boolean isLinked = DiscordPlayer.containsDiscord(member.getId());
+        boolean isLinked = DiscordPlayer.contains(member.getId());
         Console.debug("&fИгрок привязан: " + isLinked);
         if (!isLinked)
             return;

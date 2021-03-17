@@ -1,6 +1,6 @@
-name: VerifyReload
+name: MyVerify
 version: ${project.version}
-main: ru.deelter.verify.VerifyReload
+main: ru.deelter.verify.MyVerify
 api-version: 1.16
 
 prefix: VerifyReload

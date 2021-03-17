@@ -1,7 +1,7 @@
 package ru.deelter.verify.utils.player;
 
 import org.bukkit.Bukkit;
-import ru.deelter.verify.VerifyReload;
+import ru.deelter.verify.MyVerify;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ public class Applications {
 
     public static void add(UUID uuid, long id) {
         applications.put(uuid, id);
-        Bukkit.getScheduler().runTaskLaterAsynchronously(VerifyReload.getInstance(), () -> applications.remove(uuid), 30 * 20L);
+        Bukkit.getScheduler().runTaskLaterAsynchronously(MyVerify.getInstance(), () -> applications.remove(uuid), 30 * 20L);
     }
 
     public static boolean has(UUID uuid) {

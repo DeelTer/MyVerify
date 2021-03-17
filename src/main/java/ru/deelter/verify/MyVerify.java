@@ -12,7 +12,7 @@ import ru.deelter.verify.utils.player.PlayerIdentification;
 
 import java.io.File;
 
-public final class VerifyReload extends JavaPlugin {
+public final class MyVerify extends JavaPlugin {
 
     private static JavaPlugin instance;
 

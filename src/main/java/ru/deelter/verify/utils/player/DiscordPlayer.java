@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import ru.deelter.verify.VerifyReload;
+import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.database.Database;
 import ru.deelter.verify.discord.MyBot;
 import ru.deelter.verify.utils.Console;
@@ -164,7 +164,7 @@ public class DiscordPlayer {
 	/** Unregister player and remove him from Database */
 	public void unregister(boolean needRemoveFromBD) {
 		if (needRemoveFromBD) {
-			Bukkit.getScheduler().runTaskAsynchronously(VerifyReload.getInstance(), () -> {
+			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 				String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
 				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 					ps.executeUpdate();
@@ -178,7 +178,7 @@ public class DiscordPlayer {
 
 	/** Update player statistic in Database */
 	public void update() {
-		Bukkit.getScheduler().runTaskAsynchronously(VerifyReload.getInstance(), () -> {
+		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 			String sql = "INSERT OR REPLACE INTO ACCOUNTS(UUID,ID,IP,TIME) VALUES(?,?,?,?);";
 			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 				ps.setString(1, uuid.toString());
@@ -192,7 +192,7 @@ public class DiscordPlayer {
 		});
 	}
 
-	public static boolean containsDiscord(String id) {
+	public static boolean contains(String id) {
 		String sql = "SELECT 1 FROM ACCOUNTS WHERE ID = `" + id + "`;";
 		try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 			ResultSet rs = ps.executeQuery();

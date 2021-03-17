@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import ru.deelter.verify.Config;
-import ru.deelter.verify.VerifyReload;
+import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.utils.Console;
 
 import java.util.UUID;
@@ -40,7 +40,7 @@ public class PlayerIdentification implements Listener {
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent e) {
-		Bukkit.getScheduler().runTaskAsynchronously(VerifyReload.getInstance(), () -> {
+		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 			DiscordPlayer dPlayer = DiscordPlayer.get(e.getPlayer());
 			dPlayer.unregister(false);
 		});

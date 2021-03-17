@@ -31,9 +31,9 @@ public class Config {
     public static boolean DEBUG;
 
     public static void reload() {
-        VerifyReload.getInstance().reloadConfig();
+        MyVerify.getInstance().reloadConfig();
 
-        FileConfiguration config = VerifyReload.getInstance().getConfig();
+        FileConfiguration config = MyVerify.getInstance().getConfig();
         DEBUG = config.getBoolean("debug");
 
         ConfigurationSection settings = config.getConfigurationSection("settings");
