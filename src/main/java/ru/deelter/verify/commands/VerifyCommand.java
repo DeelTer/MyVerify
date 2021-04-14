@@ -6,31 +6,38 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import ru.deelter.verify.Config;
 import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.api.PlayerVerificationEvent;
-import ru.deelter.verify.utils.Colors;
 import ru.deelter.verify.utils.Console;
-import ru.deelter.verify.utils.player.Applications;
+import ru.deelter.verify.managers.ApplicationManager;
 import ru.deelter.verify.utils.player.DiscordPlayer;
 
 import java.awt.*;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 
-public class VerifyCommand implements CommandExecutor {
+public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length < 1) {
             //open menu
             return true;
         }
 
         /* Configuration reload */
-        if (args[0].equalsIgnoreCase("RELOAD")) {
-            sender.sendMessage(Colors.set("&6Конфигурация&f успешно перезагружена"));
+        if (args[0].equalsIgnoreCase("reload")) {
+            if (!sender.isOp())
+                return true;
+
+            sender.sendMessage(Config.MSG_MC_RELOAD);
             Config.reload();
         }
 
@@ -38,43 +45,44 @@ public class VerifyCommand implements CommandExecutor {
             return true;
 
         Player player = (Player) sender;
-        if (args[0].equalsIgnoreCase("UNLINK")) {
+        if (args[0].equalsIgnoreCase("unlink")) {
             DiscordPlayer discordPlayer = DiscordPlayer.get(player.getUniqueId());
             if (!discordPlayer.isLinked()) {
-                sender.sendMessage(Colors.set("&6Ваш дискорд&f не привязан"));
+                sender.sendMessage(Config.MSG_MC_NOT_LINKED);
                 return true;
             }
 
-            MessageEmbed message = new EmbedBuilder().setDescription("Ваш аккаунт успешно `отвязан` от дискорда \nВы сможете привязать его повторно тем же способом").setColor(Color.red).build();
+            MessageEmbed message = new EmbedBuilder().setDescription(Config.MSG_DS_UNLINKED).setColor(Color.red).build();
             discordPlayer.sendMessage(message);
-            discordPlayer.unregister(true);
-            sender.sendMessage(Colors.set("&6Вы отвязали&f свой дискорд"));
+            discordPlayer.removeFromBase();
+            discordPlayer.unregister();
+
+            sender.sendMessage(Config.MSG_MC_SUCCESS_UNLINK);
             return true;
         }
 
         /* Accept application */
-        if (args[0].equalsIgnoreCase("ACCEPT")) {
+        if (args[0].equalsIgnoreCase("accept")) {
             UUID uuid = player.getUniqueId();
-            if (!Applications.has(uuid)) {
-                player.sendMessage(Colors.set("&cОшибка:&f заявки отсутствуют"));
+            if (!ApplicationManager.has(uuid)) {
+                player.sendMessage(Config.MSG_MC_NO_APPLICATIONS);
                 return true;
             }
 
-            String ip = player.getAddress().getHostName();
-            long id = Applications.get(uuid), time = System.currentTimeMillis();
+            String ip = Objects.requireNonNull(player.getAddress()).getHostName();
+            long id = ApplicationManager.get(uuid), time = System.currentTimeMillis();
             DiscordPlayer dPlayer = DiscordPlayer.get(uuid);
             dPlayer.setTime(time);
             dPlayer.setId(id);
             dPlayer.setIp(ip);
-            dPlayer.update();
 
-            Applications.remove(uuid);
-            player.sendMessage(Colors.set("&6Вы&f успешно верифицировали свой аккаунт"));
+            ApplicationManager.remove(uuid);
+            player.sendMessage(Config.MSG_MC_SUCCESS_LINK);
 
             /* Roles setup */
             if (Config.ROLES_ENABLE) {
                 Console.debug("Устанавливаем роль игроку " + player.getName());
-                Config.ROLES.forEach(roleId -> dPlayer.setRole(roleId));
+                Config.ROLES.forEach(dPlayer::setRole);
             }
 
             /* Nickname setup */
@@ -83,15 +91,30 @@ public class VerifyCommand implements CommandExecutor {
                 dPlayer.setName(player.getName());
             }
 
-            Console.debug("Игрок " + player.getName() + " верифицирован");
-
             /* Call event for api */
             Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> {
                 PlayerVerificationEvent event = new PlayerVerificationEvent(player, ip, id, time);
                 Bukkit.getPluginManager().callEvent(event);
             });
+
+            Console.debug("Игрок " + player.getName() + " верифицирован");
+            return true;
         }
 
         return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        List<String> suggestions = new ArrayList<>();
+        if (args.length == 1) {
+            if (sender.isOp())
+                suggestions.add("reload");
+
+            suggestions.addAll(Arrays.asList("accept", "unlink"));
+            return suggestions;
+        }
+
+       return null;
     }
 }

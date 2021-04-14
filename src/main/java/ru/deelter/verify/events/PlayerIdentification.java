@@ -1,4 +1,4 @@
-package ru.deelter.verify.utils.player;
+package ru.deelter.verify.events;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import ru.deelter.verify.Config;
 import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.utils.Console;
+import ru.deelter.verify.utils.player.DiscordPlayer;
 
 import java.util.UUID;
 
@@ -41,8 +42,9 @@ public class PlayerIdentification implements Listener {
 	@EventHandler
 	public void onQuit(PlayerQuitEvent e) {
 		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-			DiscordPlayer dPlayer = DiscordPlayer.get(e.getPlayer());
-			dPlayer.unregister(false);
+			DiscordPlayer discordPlayer = DiscordPlayer.get(e.getPlayer());
+			if (discordPlayer.isLinked())
+				discordPlayer.update();
 		});
 	}
 }

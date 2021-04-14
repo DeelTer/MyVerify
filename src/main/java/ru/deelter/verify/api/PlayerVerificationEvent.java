@@ -39,6 +39,14 @@ public class PlayerVerificationEvent extends Event {
     }
 
     /**
+     * Get the player's IP address
+     * @return Player IP address
+     */
+    public String getIp() {
+        return ip;
+    }
+
+    /**
      * The time of verification of the player
      * @return Time in mills
      */

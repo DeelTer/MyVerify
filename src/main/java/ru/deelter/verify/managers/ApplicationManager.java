@@ -1,4 +1,4 @@
-package ru.deelter.verify.utils.player;
+package ru.deelter.verify.managers;
 
 import org.bukkit.Bukkit;
 import ru.deelter.verify.MyVerify;
@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class Applications {
+public class ApplicationManager {
 
-    private static Map<UUID, Long> applications = new HashMap<>();
+    private static final Map<UUID, Long> applications = new HashMap<>();
 
     public static void add(UUID uuid, long id) {
         applications.put(uuid, id);

@@ -13,8 +13,8 @@
 
 settings:
   bot:
-    guild: "805053383504691220"
-    token: "ODA1MDUzNzE5MDEyMDQ4OTA2.YBVSsw.6uTaoeVKrkVZearVKQTsZ8_L4Dc"
+    guild: "GUILD_ID"
+    token: "TOKEN""
 
   #Type your channels id's here
   channels:
@@ -40,5 +40,18 @@ messages:
     account-exists: "Данный `игрок` уже зарегистрирован \nвведите другой ник"
     application-exists: "Заявка на `верификацию` уже была \nсоздана другим игроком"
     application-created: "Вы успешно создали заявку на верификацию \nПожалуйста, подтвердите её `в игре`"
+    unlink: "Ваш аккаунт успешно `отвязан` от дискорда \nВы сможете привязать его повторно тем же способом"
+  minecraft:
+    no-perm: "%ni%Верификация:%ni2% Нет прав"
+    reload: "%ni%Верификация:%ni2% Конфигурация успешно перезагружена"
+    not-linked: "%ni%Верификация:%ni2% Ваш дискорд не привязан"
+    success-unlink: "%ni%Верификация:%ni2% Вы успешно отвязали свой дискорд"
+    no-applications: "%ni%Верификация:%ni2% Заявки на верификацию этого ника отсутствуют"
+    success-link: "%ni%Верификация:%ni2% Вы успешно верифицировали свой аккаунт!"
+
+#Use %COLOR%. Example: %br%◇ %cs% or %or%
+custom-colors:
+  ni: '#8B79FF'
+  ni2: '#CAC4F5'
 
 debug: true

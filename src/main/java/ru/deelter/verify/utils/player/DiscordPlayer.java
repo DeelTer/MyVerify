@@ -146,6 +146,7 @@ public class DiscordPlayer {
 
 	/** Register Discord player */
 	public DiscordPlayer register() {
+		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 			String sql = "SELECT * FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
 			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 				ResultSet rs = ps.executeQuery();
@@ -157,27 +158,18 @@ public class DiscordPlayer {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		});
 		players.putIfAbsent(uuid, this);
 		return this;
 	}
 
-	/** Unregister player and remove him from Database */
-	public void unregister(boolean needRemoveFromBD) {
-		if (needRemoveFromBD) {
-			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-				String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
-				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-					ps.executeUpdate();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			});
-		}
+	/** Unregister player from RAM */
+	public void unregister() {
 		players.remove(uuid);
 	}
 
 	/** Update player statistic in Database */
-	public void update() {
+	public DiscordPlayer update() {
 		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 			String sql = "INSERT OR REPLACE INTO ACCOUNTS(UUID,ID,IP,TIME) VALUES(?,?,?,?);";
 			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
@@ -189,6 +181,18 @@ public class DiscordPlayer {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		});
+		return this;
+	}
+
+	/** Remove player from Database */
+	public void removeFromBase() {
+		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
+			String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
+			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+				ps.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace(); }
 		});
 	}
 
