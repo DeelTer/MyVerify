@@ -1,7 +1,5 @@
 package ru.deelter.verify.utils;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.HashMap;
@@ -23,20 +21,6 @@ public class Colors {
         }
         return ChatColor.translateAlternateColorCodes('&', s);
     }
-
-    /** @return Colorized Component with color placeholders */
-    public static Component component(String s) {
-        return LegacyComponentSerializer.legacySection().deserialize(set(s));
-    }
-
-    private static boolean hasCustomColors(String s) {
-        for (Map.Entry<String, ChatColor> entry : colors.entrySet()) {
-            if (s.contains("%" + entry.getKey() + "%"))
-                return true;
-        }
-        return false;
-    }
-
     /** Register custom color */
     public static void register(String id, String hex) {
         ChatColor color = ChatColor.of(hex);

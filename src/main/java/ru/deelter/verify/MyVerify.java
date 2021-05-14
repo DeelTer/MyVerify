@@ -9,7 +9,7 @@ import ru.deelter.verify.commands.VerifyCommand;
 import ru.deelter.verify.database.Database;
 import ru.deelter.verify.discord.MyBot;
 import ru.deelter.verify.utils.Console;
-import ru.deelter.verify.events.PlayerIdentification;
+import ru.deelter.verify.events.PlayerAuthListener;
 
 import java.io.File;
 
@@ -36,7 +36,7 @@ public final class MyVerify extends JavaPlugin {
         MyBot.load();
 
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new PlayerIdentification(), this);
+        pm.registerEvents(new PlayerAuthListener(), this);
 
         /* Commands register */
         PluginCommand verifyCommand = getCommand("verify");

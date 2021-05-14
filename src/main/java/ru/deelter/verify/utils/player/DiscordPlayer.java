@@ -5,11 +5,10 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
 import ru.deelter.verify.MyVerify;
+import ru.deelter.verify.api.DiscordNameChangeEvent;
 import ru.deelter.verify.database.Database;
 import ru.deelter.verify.discord.MyBot;
 import ru.deelter.verify.utils.Console;
@@ -78,12 +77,7 @@ public class DiscordPlayer {
 
 	/** Get Discord member */
 	public Member getMember() {
-		for (Member member : MyBot.getGuild().loadMembers().get()) {
-			if (id == member.getIdLong()) {
-				return member;
-			}
-		}
-		return null;
+		return MyBot.getGuild().getMemberById(id);
 	}
 
 	/** Get player roles in Discord */
@@ -92,18 +86,19 @@ public class DiscordPlayer {
 	}
 
 	/** Set player role in Discord */
-	public void setRole(String... roleIds) {
-		if (getMember() == null)
-			return;
-
-		if (getMember().isOwner())
+	public void setRole(String roleId, boolean needSet) {
+		if (getMember() == null || getMember().isOwner())
 			return;
 
 		Guild guild = MyBot.getGuild();
-		for (String roleId : roleIds) {
-			Role role = guild.getRoleById(roleId);
+		Role role = guild.getRoleById(roleId);
+		if (role == null)
+			return;
+
+		if (needSet)
 			guild.addRoleToMember(id, role).queue();
-		}
+		else
+			guild.removeRoleFromMember(id, role).queue();
 	}
 
 	/** Set Discord nickname to ... */
@@ -114,7 +109,14 @@ public class DiscordPlayer {
 		if (getMember().isOwner())
 			return;
 
+		//modify nickname
 		getMember().modifyNickname(name).queue();
+
+		/* Call event for api */
+		Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> {
+			DiscordNameChangeEvent event = new DiscordNameChangeEvent(this, getMember().getNickname(), name);
+			Bukkit.getPluginManager().callEvent(event);
+		});
 	}
 
 	/** Send message in Discord */

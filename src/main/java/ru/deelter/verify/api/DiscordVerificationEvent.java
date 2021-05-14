@@ -1,21 +1,21 @@
 package ru.deelter.verify.api;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import ru.deelter.verify.utils.player.DiscordPlayer;
 
 /**
  * @author DeelTer
  */
-public class PlayerVerificationEvent extends Event {
+public class DiscordVerificationEvent extends Event {
 
-    private final Player player;
+    private final DiscordPlayer player;
     private final String ip;
 
     private final long id;
     private final long time;
 
-    public PlayerVerificationEvent(Player player, String ip, long id, long time) {
+    public DiscordVerificationEvent(DiscordPlayer player, String ip, long id, long time) {
         this.player = player;
         this.ip = ip;
         this.id = id;
@@ -26,7 +26,7 @@ public class PlayerVerificationEvent extends Event {
      * Get a player who has successfully verified
      * @return Player
      */
-    public Player getPlayer() {
+    public DiscordPlayer getPlayer() {
         return player;
     }
 

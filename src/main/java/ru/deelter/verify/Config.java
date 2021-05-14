@@ -3,11 +3,9 @@ package ru.deelter.verify;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import ru.deelter.verify.utils.Colors;
-import ru.deelter.verify.utils.Console;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Config {
 

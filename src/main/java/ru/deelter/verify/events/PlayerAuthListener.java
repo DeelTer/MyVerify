@@ -15,7 +15,7 @@ import ru.deelter.verify.utils.player.DiscordPlayer;
 
 import java.util.UUID;
 
-public class PlayerIdentification implements Listener {
+public class PlayerAuthListener implements Listener {
 
 	@EventHandler
 	public void onPreJoin(AsyncPlayerPreLoginEvent e) {

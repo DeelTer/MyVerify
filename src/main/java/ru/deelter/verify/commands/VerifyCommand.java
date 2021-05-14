@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 
 import ru.deelter.verify.Config;
 import ru.deelter.verify.MyVerify;
-import ru.deelter.verify.api.PlayerVerificationEvent;
+import ru.deelter.verify.api.DiscordVerificationEvent;
 import ru.deelter.verify.utils.Console;
 import ru.deelter.verify.managers.ApplicationManager;
 import ru.deelter.verify.utils.player.DiscordPlayer;
@@ -51,6 +51,8 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
                 sender.sendMessage(Config.MSG_MC_NOT_LINKED);
                 return true;
             }
+            //Remove roles
+            Config.ROLES.forEach(roleId -> discordPlayer.setRole(roleId, false));
 
             MessageEmbed message = new EmbedBuilder().setDescription(Config.MSG_DS_UNLINKED).setColor(Color.red).build();
             discordPlayer.sendMessage(message);
@@ -71,6 +73,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
 
             String ip = Objects.requireNonNull(player.getAddress()).getHostName();
             long id = ApplicationManager.get(uuid), time = System.currentTimeMillis();
+
             DiscordPlayer dPlayer = DiscordPlayer.get(uuid);
             dPlayer.setTime(time);
             dPlayer.setId(id);
@@ -82,7 +85,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
             /* Roles setup */
             if (Config.ROLES_ENABLE) {
                 Console.debug("Устанавливаем роль игроку " + player.getName());
-                Config.ROLES.forEach(dPlayer::setRole);
+                Config.ROLES.forEach(roleId -> dPlayer.setRole(roleId, true));
             }
 
             /* Nickname setup */
@@ -93,7 +96,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
 
             /* Call event for api */
             Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> {
-                PlayerVerificationEvent event = new PlayerVerificationEvent(player, ip, id, time);
+                DiscordVerificationEvent event = new DiscordVerificationEvent(dPlayer, ip, id, time);
                 Bukkit.getPluginManager().callEvent(event);
             });
 
