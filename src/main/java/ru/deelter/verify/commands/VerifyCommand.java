@@ -39,6 +39,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
 
             sender.sendMessage(Config.MSG_MC_RELOAD);
             Config.reload();
+            return true;
         }
 
         if (!(sender instanceof Player))
@@ -60,11 +61,25 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
             discordPlayer.unregister();
 
             sender.sendMessage(Config.MSG_MC_SUCCESS_UNLINK);
-            return true;
+        }
+
+        else if (args[0].equalsIgnoreCase("check")) {
+            if (args.length < 2 || !sender.isOp())
+                return true;
+
+            Player target = Bukkit.getPlayer(args[1]);
+            if (target == null || !target.isOnline())
+                return true;
+
+            DiscordPlayer discordPlayer = DiscordPlayer.get(target);
+            player.sendMessage("NAME: " + target.getName()
+                    + ", LINKED: " + discordPlayer.isLinked()
+                    + ", IP: " + discordPlayer.getIp()
+                    + ", ID: " + discordPlayer.getId());
         }
 
         /* Accept application */
-        if (args[0].equalsIgnoreCase("accept")) {
+        else if (args[0].equalsIgnoreCase("accept")) {
             UUID uuid = player.getUniqueId();
             if (!ApplicationManager.has(uuid)) {
                 player.sendMessage(Config.MSG_MC_NO_APPLICATIONS);
@@ -101,9 +116,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
             });
 
             Console.debug("Игрок " + player.getName() + " верифицирован");
-            return true;
         }
-
         return true;
     }
 
@@ -114,7 +127,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
             if (sender.isOp())
                 suggestions.add("reload");
 
-            suggestions.addAll(Arrays.asList("accept", "unlink"));
+            suggestions.addAll(Arrays.asList("accept", "unlink", "check"));
             return suggestions;
         }
 

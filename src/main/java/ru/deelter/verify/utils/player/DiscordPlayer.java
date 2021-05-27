@@ -148,21 +148,23 @@ public class DiscordPlayer {
 
 	/** Register Discord player */
 	public DiscordPlayer register() {
-		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-			String sql = "SELECT * FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
-			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-				ResultSet rs = ps.executeQuery();
-				while (rs.next()) {
-					this.id = rs.getLong("ID");
-					this.ip = rs.getString("IP");
-					this.time = rs.getLong("TIME");
+		synchronized (MyVerify.getInstance()) {
+			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
+				String sql = "SELECT * FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
+				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+					ResultSet rs = ps.executeQuery();
+					while (rs.next()) {
+						this.id = rs.getLong("ID");
+						this.ip = rs.getString("IP");
+						this.time = rs.getLong("TIME");
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
-		players.putIfAbsent(uuid, this);
-		return this;
+			});
+			players.putIfAbsent(uuid, this);
+			return this;
+		}
 	}
 
 	/** Unregister player from RAM */
@@ -172,40 +174,47 @@ public class DiscordPlayer {
 
 	/** Update player statistic in Database */
 	public DiscordPlayer update() {
-		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-			String sql = "INSERT OR REPLACE INTO ACCOUNTS(UUID,ID,IP,TIME) VALUES(?,?,?,?);";
-			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-				ps.setString(1, uuid.toString());
-				ps.setLong(2, id);
-				ps.setString(3, ip);
-				ps.setLong(4, time);
-				ps.executeUpdate();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		});
-		return this;
+		synchronized (MyVerify.getInstance()) {
+			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
+				String sql = "INSERT OR REPLACE INTO ACCOUNTS(UUID,ID,IP,TIME) VALUES(?,?,?,?);";
+				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+					ps.setString(1, uuid.toString());
+					ps.setLong(2, id);
+					ps.setString(3, ip);
+					ps.setLong(4, time);
+					ps.executeUpdate();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			});
+			return this;
+		}
 	}
 
 	/** Remove player from Database */
 	public void removeFromBase() {
-		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-			String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
-			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-				ps.executeUpdate();
-			} catch (SQLException e) {
-				e.printStackTrace(); }
-		});
+		synchronized (MyVerify.getInstance()) {
+			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
+				String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
+				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+					ps.executeUpdate();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			});
+		}
 	}
 
-	public static boolean contains(String id) {
-		String sql = "SELECT 1 FROM ACCOUNTS WHERE ID = `" + id + "`;";
-		try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-			ResultSet rs = ps.executeQuery();
-			return rs.next();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+//	public static boolean contains(String id) {
+//		synchronized (MyVerify.getInstance()) {
+//			String sql = "SELECT 1 FROM ACCOUNTS WHERE ID = `" + id + "`;";
+//			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+//				ResultSet rs = ps.executeQuery();
+//				return rs.next();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//			return false;
+//		}
+//	}
 }

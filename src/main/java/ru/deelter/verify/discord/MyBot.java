@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import ru.deelter.verify.Config;
-import ru.deelter.verify.discord.events.ReconnectListener;
 import ru.deelter.verify.discord.events.VerifyListener;
 import ru.deelter.verify.utils.Console;
 
@@ -24,7 +23,7 @@ public class MyBot {
                 .disableCache(CacheFlag.EMOTE, CacheFlag.VOICE_STATE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setActivity(Activity.playing("vk.com/deelter"))
-                .addEventListeners(new VerifyListener(), new ReconnectListener())
+                .addEventListeners(new VerifyListener())
                 .setEnabledIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         try {
             bot = builder.build();
