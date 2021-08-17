@@ -9,6 +9,6 @@ description: Verify your account
 website: https://vk.com/deelter
 
 commands:
-  verify:
-    aliases: [discordverify, ds, verify]
+  discordverify:
+    aliases: [discordverify, ds]
     usage: /<command>

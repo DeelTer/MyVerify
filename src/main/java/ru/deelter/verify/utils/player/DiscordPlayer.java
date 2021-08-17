@@ -173,7 +173,7 @@ public class DiscordPlayer {
 	}
 
 	/** Update player statistic in Database */
-	public DiscordPlayer update() {
+	public void update() {
 		synchronized (MyVerify.getInstance()) {
 			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 				String sql = "INSERT OR REPLACE INTO ACCOUNTS(UUID,ID,IP,TIME) VALUES(?,?,?,?);";
@@ -187,7 +187,6 @@ public class DiscordPlayer {
 					e.printStackTrace();
 				}
 			});
-			return this;
 		}
 	}
 

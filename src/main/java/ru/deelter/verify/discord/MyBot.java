@@ -35,10 +35,6 @@ public class MyBot {
         Console.debug("" + getGuild().loadMembers().isStarted());
     }
 
-    public static void unload() {
-        bot.shutdown();
-    }
-
     public static JDA getBot() {
         return bot;
     }

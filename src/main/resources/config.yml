@@ -1,6 +1,6 @@
 #########################################
 #                                       #
-#               VerifyReload            #
+#               MY_VERIFY               #
 #                                       #
 #########################################
 
@@ -18,7 +18,7 @@ settings:
 
   #Type your channels id's here
   channels:
-    #Can be "PRIVATE"
+    #"verify:" can be "PRIVATE"
     verify: "805152627271925810"
     logs: ""
 

@@ -70,7 +70,7 @@ public class VerifyListener extends ListenerAdapter {
         /* Send message in Minecraft */
         TextComponent text = new TextComponent(Colors.set("\n&6# &n" + user.getAsTag() + "&f создал заявку на\nверификацию вашего аккаунта: "));
         TextComponent button = new TextComponent(Colors.set("&8[&6Подтвердить&8]\n"));
-        button.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/verify accept"));
+        button.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/discordverify accept"));
         button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(Colors.set("&6Кликните,&f чтобы привязать\nваш аккаунт к дискорду"))));
 
         text.addExtra(button);

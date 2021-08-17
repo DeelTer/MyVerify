@@ -39,7 +39,7 @@ public final class MyVerify extends JavaPlugin {
         pm.registerEvents(new PlayerAuthListener(), this);
 
         /* Commands register */
-        PluginCommand verifyCommand = getCommand("verify");
+        PluginCommand verifyCommand = getCommand("discordverify");
         if (verifyCommand != null) {
             verifyCommand.setExecutor(new VerifyCommand());
             verifyCommand.setTabCompleter(new VerifyCommand());
@@ -48,6 +48,6 @@ public final class MyVerify extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        MyBot.unload();
+
     }
 }
