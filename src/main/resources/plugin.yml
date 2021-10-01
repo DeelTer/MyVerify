@@ -3,12 +3,12 @@ version: ${project.version}
 main: ru.deelter.verify.MyVerify
 api-version: 1.16
 
-prefix: VerifyReload
+prefix: MyVerify
 authors: [ DeelTer ]
 description: Verify your account
 website: https://vk.com/deelter
 
 commands:
   discordverify:
-    aliases: [discordverify, ds]
+    aliases: [verify, discord]
     usage: /<command>

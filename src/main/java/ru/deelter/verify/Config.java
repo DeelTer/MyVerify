@@ -10,7 +10,7 @@ import java.util.List;
 public class Config {
 
     /* Bot settings */
-    public static String VERIFY_CHANNEL;
+    public static String VERIFY_CHANNEL_ID;
     public static String GUILD_ID;
     public static String TOKEN;
 
@@ -19,7 +19,7 @@ public class Config {
     public static boolean NICKNAME_UPDATER_ENABLE;
 
     /* Roles settings */
-    public static List<String> ROLES = new ArrayList<>();
+    public static List<String> ROLES_ID = new ArrayList<>();
     public static boolean ROLES_ENABLE = false;
 
     /* Messages */
@@ -53,54 +53,46 @@ public class Config {
 
         /* Custom colors */
         ConfigurationSection colors = config.getConfigurationSection("custom-colors");
-        if (colors == null)
-            return;
+        if (colors == null) return;
 
         colors.getKeys(false).forEach(id -> Colors.register(id, colors.getString(id)));
 
         /* Settings */
         ConfigurationSection settings = config.getConfigurationSection("settings");
-        if (settings == null)
-            return;
+        if (settings == null) return;
 
         ConfigurationSection bot = settings.getConfigurationSection("bot");
-        if (bot == null)
-            return;
+        if (bot == null) return;
 
         GUILD_ID = bot.getString("guild");
         TOKEN = bot.getString("token");
 
         ConfigurationSection channels = settings.getConfigurationSection("channels");
-        if (channels == null)
-            return;
+        if (channels == null) return;
 
-        VERIFY_CHANNEL = channels.getString("verify");
+        VERIFY_CHANNEL_ID = channels.getString("verify");
 
         /* Nickname settings */
         ConfigurationSection nickname = settings.getConfigurationSection("nickname");
-        if (nickname == null)
-            return;
+        if (nickname == null) return;
 
         NICKNAME_ENABLE = nickname.getBoolean("enable");
         NICKNAME_UPDATER_ENABLE = nickname.getBoolean("updater-enable");
 
         /* Roles settings */
         ConfigurationSection roles = settings.getConfigurationSection("roles");
-        if (roles == null)
-            return;
+        if (roles == null) return;
 
         ROLES_ENABLE = roles.getBoolean("enable");
-        ROLES = roles.getStringList("id");
+        Config.ROLES_ID = roles.getStringList("id");
 
         /* Messages */
         ConfigurationSection messages = config.getConfigurationSection("messages");
-        if (messages == null)
-            return;
+        if (messages == null) return;
 
         /* Discord messages */
         ConfigurationSection discord = messages.getConfigurationSection("discord");
-        if (discord == null)
-            return;
+        if (discord == null) return;
 
         MSG_DS_PLAYER_OFFLINE = discord.getString("player-offline");
         MSG_DS_ACCOUNT_EXISTS = discord.getString("account-exists");
@@ -110,8 +102,7 @@ public class Config {
 
         /* Minecraft messages */
         ConfigurationSection minecraft = messages.getConfigurationSection("minecraft");
-        if (minecraft == null)
-            return;
+        if (minecraft == null) return;
 
         MSG_MC_NO_PERM = Colors.set(minecraft.getString("no-perm"));
         MSG_MC_RELOAD = Colors.set(minecraft.getString("reload"));

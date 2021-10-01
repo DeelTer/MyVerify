@@ -14,7 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 import ru.deelter.verify.Config;
 import ru.deelter.verify.MyVerify;
-import ru.deelter.verify.api.DiscordVerificationEvent;
+import ru.deelter.verify.api.actions.DiscordUnlinkEvent;
+import ru.deelter.verify.api.actions.DiscordVerificationEvent;
 import ru.deelter.verify.utils.Console;
 import ru.deelter.verify.managers.ApplicationManager;
 import ru.deelter.verify.utils.player.DiscordPlayer;
@@ -23,7 +24,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
+public class VerifyCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -34,16 +35,14 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
 
         /* Configuration reload */
         if (args[0].equalsIgnoreCase("reload")) {
-            if (!sender.isOp())
-                return true;
+            if (!sender.isOp()) return true;
 
             sender.sendMessage(Config.MSG_MC_RELOAD);
             Config.reload();
             return true;
         }
 
-        if (!(sender instanceof Player))
-            return true;
+        if (!(sender instanceof Player)) return true;
 
         Player player = (Player) sender;
         if (args[0].equalsIgnoreCase("unlink")) {
@@ -53,7 +52,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
                 return true;
             }
             //Remove roles
-            Config.ROLES.forEach(roleId -> discordPlayer.setRole(roleId, false));
+            Config.ROLES_ID.forEach(discordPlayer::removeRole);
 
             MessageEmbed message = new EmbedBuilder().setDescription(Config.MSG_DS_UNLINKED).setColor(Color.red).build();
             discordPlayer.sendMessage(message);
@@ -61,15 +60,14 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
             discordPlayer.unregister();
 
             sender.sendMessage(Config.MSG_MC_SUCCESS_UNLINK);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> new DiscordUnlinkEvent(discordPlayer).callEvent());
         }
 
         else if (args[0].equalsIgnoreCase("check")) {
-            if (args.length < 2 || !sender.isOp())
-                return true;
+            if (args.length < 2 || !sender.isOp()) return true;
 
             Player target = Bukkit.getPlayer(args[1]);
-            if (target == null || !target.isOnline())
-                return true;
+            if (target == null || !target.isOnline()) return true;
 
             DiscordPlayer discordPlayer = DiscordPlayer.get(target);
             player.sendMessage("NAME: " + target.getName()
@@ -100,7 +98,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
             /* Roles setup */
             if (Config.ROLES_ENABLE) {
                 Console.debug("Устанавливаем роль игроку " + player.getName());
-                Config.ROLES.forEach(roleId -> dPlayer.setRole(roleId, true));
+                Config.ROLES_ID.forEach(dPlayer::addRole);
             }
 
             /* Nickname setup */
@@ -110,11 +108,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
             }
 
             /* Call event for api */
-            Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> {
-                DiscordVerificationEvent event = new DiscordVerificationEvent(dPlayer, ip, id, time);
-                Bukkit.getPluginManager().callEvent(event);
-            });
-
+            Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> new DiscordVerificationEvent(dPlayer).callEvent());
             Console.debug("Игрок " + player.getName() + " верифицирован");
         }
         return true;
@@ -124,8 +118,7 @@ public class VerifyCommand implements CommandExecutor, @Nullable TabCompleter {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         List<String> suggestions = new ArrayList<>();
         if (args.length == 1) {
-            if (sender.isOp())
-                suggestions.add("reload");
+            if (sender.isOp()) suggestions.add("reload");
 
             suggestions.addAll(Arrays.asList("accept", "unlink", "check"));
             return suggestions;

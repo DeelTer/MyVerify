@@ -7,9 +7,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import ru.deelter.verify.commands.VerifyCommand;
 import ru.deelter.verify.database.Database;
-import ru.deelter.verify.discord.MyBot;
+import ru.deelter.verify.discord.Bot;
 import ru.deelter.verify.utils.Console;
-import ru.deelter.verify.events.PlayerAuthListener;
+import ru.deelter.verify.listeners.PlayerAuthListener;
 
 import java.io.File;
 
@@ -33,7 +33,7 @@ public final class MyVerify extends JavaPlugin {
 
         Database.setup(this);
         Config.load();
-        MyBot.load();
+        Bot.load();
 
         PluginManager pm = Bukkit.getPluginManager();
         pm.registerEvents(new PlayerAuthListener(), this);

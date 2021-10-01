@@ -7,10 +7,8 @@ import java.sql.SQLException;
 
 public class Database {
 
-	private static Database database;
-	
 	public static void setup(Plugin plugin) {
-		database = new SQLite(plugin.getDataFolder());
+		Database database = new SQLite(plugin.getDataFolder());
 		database.setupTables();
 	}
 

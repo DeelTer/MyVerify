@@ -1,4 +1,4 @@
-package ru.deelter.verify.events;
+package ru.deelter.verify.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -31,8 +31,7 @@ public class PlayerAuthListener implements Listener {
 			return;
 
 		Console.debug("Информация: " + ", " + dPlayer.getIp() + ", " + dPlayer.getId());
-		if (!Config.NICKNAME_UPDATER_ENABLE)
-			return;
+		if (!Config.NICKNAME_UPDATER_ENABLE) return;
 
 		/* Set discord name to current */
 		dPlayer.setName(player.getName());

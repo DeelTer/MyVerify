@@ -1,33 +1,28 @@
 package ru.deelter.verify.api;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.deelter.verify.utils.player.DiscordPlayer;
 
-/**
- * @author DeelTer
- */
-public class DiscordVerificationEvent extends Event {
+public class DiscordEvent extends Event {
 
     private final DiscordPlayer player;
-    private final String ip;
 
-    private final long id;
-    private final long time;
-
-    public DiscordVerificationEvent(DiscordPlayer player, String ip, long id, long time) {
+    public DiscordEvent(@NotNull DiscordPlayer player) {
         this.player = player;
-        this.ip = ip;
-        this.id = id;
-        this.time = time;
     }
 
-    /**
-     * Get a player who has successfully verified
-     * @return Player
-     */
-    public DiscordPlayer getPlayer() {
+    @NotNull
+    public DiscordPlayer getDiscordPlayer() {
         return player;
+    }
+
+    @Nullable
+    public Player getPlayer() {
+        return player.getPlayer();
     }
 
     /**
@@ -35,28 +30,29 @@ public class DiscordVerificationEvent extends Event {
      * @return Discord ID
      */
     public long getId() {
-        return id;
+        return player.getId();
     }
 
     /**
      * Get the player's IP address
      * @return Player IP address
      */
+    @Nullable
     public String getIp() {
-        return ip;
+        return player.getIp();
     }
 
     /**
      * The time of verification of the player
-     * @return Time in mills
+     * @return Time in mills or -1
      */
     public long getFirstTime() {
-        return time;
+        return player.getTime();
     }
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    public HandlerList getHandlers() {
+    public @NotNull HandlerList getHandlers() {
         return HANDLERS;
     }
 

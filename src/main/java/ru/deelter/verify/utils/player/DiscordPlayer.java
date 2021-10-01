@@ -7,34 +7,35 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.deelter.verify.MyVerify;
-import ru.deelter.verify.api.DiscordNameChangeEvent;
+import ru.deelter.verify.api.actions.DiscordBanEvent;
+import ru.deelter.verify.api.actions.DiscordNameChangeEvent;
 import ru.deelter.verify.database.Database;
-import ru.deelter.verify.discord.MyBot;
-import ru.deelter.verify.utils.Console;
+import ru.deelter.verify.discord.Bot;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class DiscordPlayer {
 
-	private static final Map<UUID, DiscordPlayer> players = new HashMap<>();
+	private static final Guild GUILD = Bot.getGuild();
+
+	private static final Map<UUID, DiscordPlayer> PLAYERS = new HashMap<>();
 	private final UUID uuid;
 	private String ip;
 
 	private long id, time;
 
-	public DiscordPlayer(UUID uuid) {
+	public DiscordPlayer(@NotNull UUID uuid) {
 		this.uuid = uuid;
 	}
 
-	public DiscordPlayer(UUID uuid, long id, String ip, long time) {
+	public DiscordPlayer(@NotNull UUID uuid, long id, String ip, long time) {
 		this.uuid = uuid;
 		this.id = id;
 		this.ip = ip;
@@ -53,7 +54,7 @@ public class DiscordPlayer {
 		return ip;
 	}
 
-	public void setIp(String ip) {
+	public void setIp(@NotNull String ip) {
 		this.ip = ip;
 	}
 
@@ -75,75 +76,121 @@ public class DiscordPlayer {
 		return Bukkit.getPlayer(uuid);
 	}
 
-	/** Get Discord member */
+	/**
+	 * Get discord member
+	 * @return Member (can be null)
+	 */
+	@Nullable
 	public Member getMember() {
-		return MyBot.getGuild().getMemberById(id);
+		return GUILD.getMemberById(id);
 	}
 
-	/** Get player roles in Discord */
+	/**
+	 * Get all player roles
+	 * @return Roles list
+	 */
+	@NotNull
 	public List<Role> getRoles() {
-		return getMember().getRoles();
+		Member member = getMember();
+		return member == null ? Collections.emptyList() : member.getRoles();
 	}
 
-	/** Set player role in Discord */
-	public void setRole(String roleId, boolean needSet) {
-		if (getMember() == null || getMember().isOwner())
-			return;
-
-		Guild guild = MyBot.getGuild();
-		Role role = guild.getRoleById(roleId);
-		if (role == null)
-			return;
-
-		if (needSet)
-			guild.addRoleToMember(id, role).queue();
-		else
-			guild.removeRoleFromMember(id, role).queue();
+	/**
+	 * Get all player role ids
+	 * @return Role ids list
+	 */
+	@NotNull
+	public List<String> getRoleIds() {
+		List<String> ids = new ArrayList<>();
+		getRoles().forEach(role -> ids.add(role.getId()));
+		return ids;
 	}
 
-	/** Set Discord nickname to ... */
-	public void setName(String name) {
-		if (getMember() == null)
-			return;
-
-		if (getMember().isOwner())
-			return;
-
-		//modify nickname
-		getMember().modifyNickname(name).queue();
-
-		/* Call event for api */
-		Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> {
-			DiscordNameChangeEvent event = new DiscordNameChangeEvent(this, getMember().getNickname(), name);
-			Bukkit.getPluginManager().callEvent(event);
-		});
+	/**
+	 * Add role to the player
+	 * @param roleId Role id
+	 */
+	public boolean hasRole(@NotNull String roleId) {
+		return getRoleIds().contains(roleId);
 	}
 
-	/** Send message in Discord */
-	public void sendMessage(String message) {
+	/**
+	 * Remove player role
+	 * @param roleId Role id
+	 */
+	public void removeRole(@NotNull String roleId) {
+		setRole(roleId, false);
+	}
+
+	/**
+	 * Add role to the player
+	 * @param roleId Role id
+	 */
+	public void addRole(@NotNull String roleId) {
+		setRole(roleId, true);
+	}
+
+	public void setRole(@NotNull String roleId, boolean add) {
+		if (!isValid(getMember())) return;
+
+		Role role = GUILD.getRoleById(roleId);
+		if (role == null) return;
+
+		if (add) GUILD.addRoleToMember(id, role).queue();
+		else GUILD.removeRoleFromMember(id, role).queue();
+	}
+
+	/**
+	 * Set name in discord
+	 * @param name New discord name
+	 */
+	public void setName(@NotNull String name) {
+		Member member = getMember();
+		if (!isValid(member)) return;
+
+		member.modifyNickname(name).queue(); //modify nickname
+		Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> new DiscordNameChangeEvent(this, getMember().getNickname(), name).callEvent());
+	}
+
+	/**
+	 * Send message to player discord
+	 * @param message Message
+	 */
+	public void sendMessage(@NotNull String message) {
 		sendMessage(new EmbedBuilder().setDescription(message).build());
 	}
 
-	/** Send Embed message in Discord */
-	public void sendMessage(MessageEmbed message) {
-		Console.debug("Отправляем сообщение игроку " + getPlayer().getName());
-		MyBot.getBot().openPrivateChannelById(id).queue(chat -> chat.sendMessage(message).queue());
+	/**
+	 * Send message to player discord
+	 * @param message Message
+	 */
+	public void sendMessage(@NotNull MessageEmbed message) {
+		Bot.getDiscordBot().openPrivateChannelById(id).queue(chat -> chat.sendMessage(message).queue());
 	}
 
-	/** Ban player on Discord server */
-	public void ban(int delDays, String reason) {
-		Console.debug("&fБаним игрока" + getPlayer().getName());
-		getMember().ban(delDays, reason).queue();
+	/**
+	 * Ban player in discord
+	 * @param delDays Days
+	 * @param reason Reason
+	 */
+	public void ban(int delDays, @NotNull String reason) {
+		Member member = getMember();
+		if (isValid(member)) member.ban(delDays, reason).queue();
+		Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> new DiscordBanEvent(this).callEvent());
+	}
+
+	private boolean isValid(@Nullable Member member) {
+		return member != null && !member.isOwner();
 	}
 
 	/** Get Discord player by PLAYER */
-	public static DiscordPlayer get(Player player) {
+	public static DiscordPlayer get(@NotNull Player player) {
 		return get(player.getUniqueId());
 	}
 
 	/** Get Discord player by UUID */
-	public static DiscordPlayer get(UUID uuid) {
-		return players.containsKey(uuid) ? players.get(uuid) : new DiscordPlayer(uuid).register();
+	public static DiscordPlayer get(@NotNull UUID uuid) {
+		return PLAYERS.containsKey(uuid) ? PLAYERS.get(uuid) : new DiscordPlayer(uuid).register();
 	}
 
 	/** Register Discord player */
@@ -162,14 +209,14 @@ public class DiscordPlayer {
 					e.printStackTrace();
 				}
 			});
-			players.putIfAbsent(uuid, this);
+			PLAYERS.putIfAbsent(uuid, this);
 			return this;
 		}
 	}
 
 	/** Unregister player from RAM */
 	public void unregister() {
-		players.remove(uuid);
+		PLAYERS.remove(uuid);
 	}
 
 	/** Update player statistic in Database */
@@ -203,17 +250,4 @@ public class DiscordPlayer {
 			});
 		}
 	}
-
-//	public static boolean contains(String id) {
-//		synchronized (MyVerify.getInstance()) {
-//			String sql = "SELECT 1 FROM ACCOUNTS WHERE ID = `" + id + "`;";
-//			try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-//				ResultSet rs = ps.executeQuery();
-//				return rs.next();
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//			return false;
-//		}
-//	}
 }

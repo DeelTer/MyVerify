@@ -17,8 +17,7 @@ settings:
     token: "TOKEN"
 
   #Type your channels id's here
-  channels:
-    #"verify:" can be "PRIVATE"
+  channels: #Id's
     verify: "805152627271925810"
     logs: ""
 

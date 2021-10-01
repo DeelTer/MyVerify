@@ -6,7 +6,7 @@
 
     <groupId>ru.deelter.verify</groupId>
     <artifactId>MyVerify</artifactId>
-    <version>4.0</version>
+    <version>6.0</version>
     <packaging>jar</packaging>
 
     <name>MyVerify</name>
@@ -60,9 +60,9 @@
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>jcenter</id>
-            <name>jcenter-bintray</name>
-            <url>https://jcenter.bintray.com</url>
+            <id>dv8tion</id>
+            <name>m2-dv8tion</name>
+            <url>https://m2.dv8tion.net/releases</url>
         </repository>
     </repositories>
 
@@ -76,7 +76,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.2.0_241</version>
+            <version>4.3.0_324</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>

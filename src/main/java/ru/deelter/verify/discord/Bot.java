@@ -8,14 +8,14 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import ru.deelter.verify.Config;
-import ru.deelter.verify.discord.events.VerifyListener;
+import ru.deelter.verify.discord.listeners.DiscordVerifyListener;
 import ru.deelter.verify.utils.Console;
 
 import javax.security.auth.login.LoginException;
 
-public class MyBot {
+public class Bot {
 
-    private static JDA bot;
+    private static JDA discordBot;
     private static Guild guild;
 
     public static void load() {
@@ -23,20 +23,20 @@ public class MyBot {
                 .disableCache(CacheFlag.EMOTE, CacheFlag.VOICE_STATE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setActivity(Activity.playing("vk.com/deelter"))
-                .addEventListeners(new VerifyListener())
+                .addEventListeners(new DiscordVerifyListener())
                 .setEnabledIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         try {
-            bot = builder.build();
-            bot.awaitReady();
-        } catch (LoginException | InterruptedException e) {
-            e.printStackTrace();
+            discordBot = builder.build();
+            discordBot.awaitReady();
+        } catch (LoginException | InterruptedException exception) {
+            exception.printStackTrace();
         }
-        guild = bot.getGuildById(Config.GUILD_ID);
+        guild = discordBot.getGuildById(Config.GUILD_ID);
         Console.debug("" + getGuild().loadMembers().isStarted());
     }
 
-    public static JDA getBot() {
-        return bot;
+    public static JDA getDiscordBot() {
+        return discordBot;
     }
 
     public static Guild getGuild() {
