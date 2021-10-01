@@ -4,34 +4,24 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import ru.deelter.verify.commands.VerifyCommand;
 import ru.deelter.verify.database.Database;
 import ru.deelter.verify.discord.Bot;
-import ru.deelter.verify.utils.Console;
 import ru.deelter.verify.listeners.PlayerAuthListener;
-
-import java.io.File;
 
 public final class MyVerify extends JavaPlugin {
 
-    private static JavaPlugin instance;
+    private static MyVerify instance;
 
-    public static JavaPlugin getInstance() {
-        return instance;
+    @Override
+    public void onLoad() {
+        instance = this;
+        saveDefaultConfig();
+        Database.setupDatabase(this);
     }
 
     @Override
     public void onEnable() {
-        instance = this;
-
-        File config = new File(instance.getDataFolder().getPath() + "/config.yml");
-        if (!config.exists()) {
-            Console.log("&6Конфиг&f успешно загружен");
-            saveDefaultConfig();
-        }
-
-        Database.setup(this);
         Config.load();
         Bot.load();
 
@@ -49,5 +39,9 @@ public final class MyVerify extends JavaPlugin {
     @Override
     public void onDisable() {
 
+    }
+
+    public static MyVerify getInstance() {
+        return instance;
     }
 }

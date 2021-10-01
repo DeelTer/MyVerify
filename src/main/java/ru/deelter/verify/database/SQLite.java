@@ -10,26 +10,29 @@ import java.sql.SQLException;
 
 public class SQLite extends Database {
 
-	private static final String database = "database";
-	private static File dataFolder;
+	private static final String DATABASE = "database";
+	private final File dataFolder;
 
 	public SQLite(File folder) {
-		dataFolder = new File(folder, database + ".db");
+		dataFolder = new File(folder, DATABASE + ".db");
 		if (!dataFolder.exists()) {
 			try {
-				dataFolder.createNewFile();
+				if (!dataFolder.createNewFile())
+					Bukkit.getLogger().info("Could not create a database file!");
 			} catch (IOException e) {
-				Bukkit.getLogger().info("File write error: " + database + ".db");
+				Bukkit.getLogger().info("File write error: " + DATABASE + ".db");
 			}
 		}
 	}
 
-	public static Connection getConnection() {
-		try {
-			return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return null;
+	@Override
+	public Connection getConnection() throws SQLException {
+		return DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
 	}
+
+	@Override
+	public void close() {
+		// We have nothing to close
+	}
+
 }

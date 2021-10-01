@@ -53,4 +53,13 @@ custom-colors:
   ni: '#8B79FF'
   ni2: '#CAC4F5'
 
+database:
+  use-mysql: false
+  mysql:
+    host: ""
+    port: 3306
+    database: ""
+    username: ""
+    password: ""
+
 debug: true
