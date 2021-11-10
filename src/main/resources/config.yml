@@ -56,6 +56,7 @@ custom-colors:
 database:
   use-mysql: false
   mysql:
+    name: ""
     host: ""
     port: 3306
     database: ""

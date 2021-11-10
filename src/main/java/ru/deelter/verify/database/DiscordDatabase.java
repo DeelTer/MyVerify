@@ -5,7 +5,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.deelter.database.utils.Database;
 import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.player.DiscordPlayer;
 

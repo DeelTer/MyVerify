@@ -86,9 +86,10 @@
         </dependency>
 
         <dependency>
-            <groupId>ru.deelter</groupId>
-            <artifactId>MyDatabase</artifactId>
-            <version>1.0</version>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>5.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
