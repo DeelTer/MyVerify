@@ -1,10 +1,9 @@
-package ru.deelter.verify.managers.discord;
+package ru.deelter.verify.player;
 
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import ru.deelter.verify.utils.player.DiscordPlayer;
 
 import java.util.List;
 

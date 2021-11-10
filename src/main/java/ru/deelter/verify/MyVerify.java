@@ -5,9 +5,9 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import ru.deelter.verify.commands.VerifyCommand;
-import ru.deelter.verify.database.Database;
-import ru.deelter.verify.discord.Bot;
-import ru.deelter.verify.listeners.PlayerAuthListener;
+import ru.deelter.verify.discord.DiscordBot;
+import ru.deelter.verify.player.DiscordPlayerAuth;
+import ru.deelter.verify.database.DiscordDatabase;
 
 public final class MyVerify extends JavaPlugin {
 
@@ -17,16 +17,16 @@ public final class MyVerify extends JavaPlugin {
     public void onLoad() {
         instance = this;
         saveDefaultConfig();
-        Database.setupDatabase(this);
+        DiscordDatabase.setupTables();
     }
 
     @Override
     public void onEnable() {
         Config.load();
-        Bot.load();
+        DiscordBot.load();
 
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new PlayerAuthListener(), this);
+        pm.registerEvents(new DiscordPlayerAuth(), this);
 
         /* Commands register */
         PluginCommand verifyCommand = getCommand("discordverify");

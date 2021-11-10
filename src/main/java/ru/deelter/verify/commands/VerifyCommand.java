@@ -8,21 +8,20 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 import ru.deelter.verify.Config;
 import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.api.actions.DiscordUnlinkEvent;
 import ru.deelter.verify.api.actions.DiscordVerificationEvent;
+import ru.deelter.verify.database.DiscordDatabase;
+import ru.deelter.verify.player.PlayerApplicationManager;
 import ru.deelter.verify.utils.Console;
-import ru.deelter.verify.managers.ApplicationManager;
-import ru.deelter.verify.utils.player.DiscordPlayer;
+import ru.deelter.verify.player.DiscordPlayer;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class VerifyCommand implements CommandExecutor, TabCompleter {
 
@@ -56,8 +55,9 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
 
             MessageEmbed message = new EmbedBuilder().setDescription(Config.MSG_DS_UNLINKED).setColor(Color.red).build();
             discordPlayer.sendMessage(message);
-            discordPlayer.removeFromBase();
             discordPlayer.unregister();
+
+            DiscordDatabase.deletePlayer(discordPlayer);
 
             sender.sendMessage(Config.MSG_MC_SUCCESS_UNLINK);
             Bukkit.getScheduler().scheduleSyncDelayedTask(MyVerify.getInstance(), () -> new DiscordUnlinkEvent(discordPlayer).callEvent());
@@ -79,20 +79,20 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
         /* Accept application */
         else if (args[0].equalsIgnoreCase("accept")) {
             UUID uuid = player.getUniqueId();
-            if (!ApplicationManager.has(uuid)) {
+            if (!PlayerApplicationManager.has(uuid)) {
                 player.sendMessage(Config.MSG_MC_NO_APPLICATIONS);
                 return true;
             }
 
             String ip = Objects.requireNonNull(player.getAddress()).getHostName();
-            long id = ApplicationManager.get(uuid), time = System.currentTimeMillis();
+            long id = PlayerApplicationManager.get(uuid), time = System.currentTimeMillis();
 
             DiscordPlayer dPlayer = DiscordPlayer.get(uuid);
             dPlayer.setTime(time);
             dPlayer.setId(id);
             dPlayer.setIp(ip);
 
-            ApplicationManager.remove(uuid);
+            PlayerApplicationManager.remove(uuid);
             player.sendMessage(Config.MSG_MC_SUCCESS_LINK);
 
             /* Roles setup */

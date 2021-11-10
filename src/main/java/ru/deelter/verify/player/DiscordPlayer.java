@@ -1,4 +1,4 @@
-package ru.deelter.verify.utils.player;
+package ru.deelter.verify.player;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -12,18 +12,13 @@ import org.jetbrains.annotations.Nullable;
 import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.api.actions.DiscordBanEvent;
 import ru.deelter.verify.api.actions.DiscordNameChangeEvent;
-import ru.deelter.verify.database.Database;
-import ru.deelter.verify.discord.Bot;
+import ru.deelter.verify.discord.DiscordBot;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 public class DiscordPlayer {
 
-	private static final Guild GUILD = Bot.getGuild();
+	private static final Guild GUILD = DiscordBot.getGuild();
 
 	private static final Map<UUID, DiscordPlayer> PLAYERS = new HashMap<>();
 	private final UUID uuid;
@@ -35,11 +30,20 @@ public class DiscordPlayer {
 		this.uuid = uuid;
 	}
 
+	public DiscordPlayer(@NotNull Player player) {
+		this(player.getUniqueId());
+	}
+
 	public DiscordPlayer(@NotNull UUID uuid, long id, String ip, long time) {
 		this.uuid = uuid;
 		this.id = id;
 		this.ip = ip;
 		this.time = time;
+	}
+
+	@NotNull
+	public UUID getUUID() {
+		return uuid;
 	}
 
 	public long getId() {
@@ -115,19 +119,19 @@ public class DiscordPlayer {
 	}
 
 	/**
-	 * Remove player role
-	 * @param roleId Role id
-	 */
-	public void removeRole(@NotNull String roleId) {
-		setRole(roleId, false);
-	}
-
-	/**
 	 * Add role to the player
 	 * @param roleId Role id
 	 */
 	public void addRole(@NotNull String roleId) {
 		setRole(roleId, true);
+	}
+
+	/**
+	 * Remove player role
+	 * @param roleId Role id
+	 */
+	public void removeRole(@NotNull String roleId) {
+		setRole(roleId, false);
 	}
 
 	public void setRole(@NotNull String roleId, boolean add) {
@@ -165,7 +169,7 @@ public class DiscordPlayer {
 	 * @param message Message
 	 */
 	public void sendMessage(@NotNull MessageEmbed message) {
-		Bot.getDiscordBot().openPrivateChannelById(id).queue(chat -> chat.sendMessage(message).queue());
+		DiscordBot.getDiscordBot().openPrivateChannelById(id).queue(chat -> chat.sendMessage(message).queue());
 	}
 
 	/**
@@ -195,59 +199,34 @@ public class DiscordPlayer {
 
 	/** Register Discord player */
 	public DiscordPlayer register() {
-		synchronized (MyVerify.getInstance()) {
-			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-				String sql = "SELECT * FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
-				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-					ResultSet rs = ps.executeQuery();
-					while (rs.next()) {
-						this.id = rs.getLong("ID");
-						this.ip = rs.getString("IP");
-						this.time = rs.getLong("TIME");
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			});
-			PLAYERS.putIfAbsent(uuid, this);
-			return this;
-		}
+		PLAYERS.putIfAbsent(uuid, this);
+		return this;
 	}
 
-	/** Unregister player from RAM */
 	public void unregister() {
 		PLAYERS.remove(uuid);
 	}
 
-	/** Update player statistic in Database */
-	public void update() {
-		synchronized (MyVerify.getInstance()) {
-			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-				String sql = "INSERT OR REPLACE INTO ACCOUNTS(UUID,ID,IP,TIME) VALUES(?,?,?,?);";
-				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-					ps.setString(1, uuid.toString());
-					ps.setLong(2, id);
-					ps.setString(3, ip);
-					ps.setLong(4, time);
-					ps.executeUpdate();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			});
-		}
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		DiscordPlayer that = (DiscordPlayer) o;
+		return Objects.equals(uuid, that.uuid);
 	}
 
-	/** Remove player from Database */
-	public void removeFromBase() {
-		synchronized (MyVerify.getInstance()) {
-			Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
-				String sql = "DELETE FROM ACCOUNTS WHERE UUID = '" + uuid + "';";
-				try (Connection con = Database.openConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
-					ps.executeUpdate();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			});
-		}
+	@Override
+	public int hashCode() {
+		return Objects.hash(uuid);
+	}
+
+	@Override
+	public String toString() {
+		return "DiscordPlayer{" +
+				"uuid=" + uuid +
+				", ip='" + ip + '\'' +
+				", id=" + id + '\'' +
+				", linked=" + isLinked() +
+				'}';
 	}
 }

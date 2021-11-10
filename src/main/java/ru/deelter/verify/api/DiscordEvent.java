@@ -5,7 +5,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.deelter.verify.utils.player.DiscordPlayer;
+import ru.deelter.verify.player.DiscordPlayer;
 
 public class DiscordEvent extends Event {
 

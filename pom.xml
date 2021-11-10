@@ -6,7 +6,7 @@
 
     <groupId>ru.deelter.verify</groupId>
     <artifactId>MyVerify</artifactId>
-    <version>6.0</version>
+    <version>7.0</version>
     <packaging>jar</packaging>
 
     <name>MyVerify</name>
@@ -86,10 +86,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>5.0.0</version>
-            <scope>provided</scope>
+            <groupId>ru.deelter</groupId>
+            <artifactId>MyDatabase</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>
