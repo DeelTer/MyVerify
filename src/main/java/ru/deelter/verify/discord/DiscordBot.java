@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import ru.deelter.verify.Config;
-import ru.deelter.verify.utils.Console;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -37,7 +36,6 @@ public class DiscordBot {
             exception.printStackTrace();
         }
         guild = discordBot.getGuildById(Config.GUILD_ID);
-        Console.debug("" + getGuild().loadMembers().isStarted());
     }
 
     public static JDA getDiscordBot() {

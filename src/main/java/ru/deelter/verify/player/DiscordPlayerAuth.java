@@ -3,6 +3,7 @@ package ru.deelter.verify.player;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -15,19 +16,21 @@ public class DiscordPlayerAuth implements Listener {
 
 	@EventHandler
 	public void onLogin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		DiscordPlayer discordPlayer = DiscordDatabase.exportPlayer(player);
-		if (!discordPlayer.isLinked()) return;
+		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
+			Player player = event.getPlayer();
+			DiscordPlayer discordPlayer = DiscordDatabase.exportPlayer(player);
+			if (!discordPlayer.isLinked()) return;
 
-		Console.debug("Информация: " + ", " + discordPlayer.getIp() + ", " + discordPlayer.getId());
-		if (!Config.NICKNAME_UPDATER_ENABLE) return;
+			Console.debug("Информация: " + ", " + discordPlayer.getIp() + ", " + discordPlayer.getId());
+			if (!Config.NICKNAME_UPDATER_ENABLE) return;
 
-		// Sync discord name with minecraft
-		discordPlayer.setName(player.getName());
-		Console.debug("Обновляем ник у " + player.getName());
+			// Sync discord name with minecraft
+			discordPlayer.setName(player.getName());
+			Console.debug("Обновляем ник у " + player.getName());
+		});
 	}
 
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGH)
 	public void onQuit(PlayerQuitEvent event) {
 		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 			DiscordPlayer player = DiscordPlayer.get(event.getPlayer());
