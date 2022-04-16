@@ -138,7 +138,7 @@ public class DiscordDatabase {
                     long id = rs.getLong("ID");
                     String ip = rs.getString("IP");
                     long time = rs.getLong("TIME");
-                    return new DiscordPlayer(uuid, id, ip, time).register();
+                    return new DiscordPlayer(uuid, id, ip, time);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

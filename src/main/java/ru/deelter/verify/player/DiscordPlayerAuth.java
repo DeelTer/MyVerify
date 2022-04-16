@@ -18,7 +18,7 @@ public class DiscordPlayerAuth implements Listener {
 	public void onLogin(PlayerJoinEvent event) {
 		Bukkit.getScheduler().runTaskAsynchronously(MyVerify.getInstance(), () -> {
 			Player player = event.getPlayer();
-			DiscordPlayer discordPlayer = DiscordDatabase.exportPlayer(player);
+			DiscordPlayer discordPlayer = DiscordDatabase.exportPlayer(player).register();
 			if (!discordPlayer.isLinked()) return;
 
 			Console.debug("Информация: " + ", " + discordPlayer.getIp() + ", " + discordPlayer.getId());

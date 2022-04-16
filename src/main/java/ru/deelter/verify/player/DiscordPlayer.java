@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.api.actions.DiscordBanEvent;
 import ru.deelter.verify.api.actions.DiscordNameChangeEvent;
+import ru.deelter.verify.database.DiscordDatabase;
 import ru.deelter.verify.discord.DiscordBot;
 
 import java.util.*;
@@ -87,6 +88,11 @@ public class DiscordPlayer {
 	@Nullable
 	public Member getMember() {
 		return GUILD.getMemberById(id);
+	}
+
+	public void unlink() {
+		DiscordDatabase.deletePlayer(uuid);
+		this.unregister();
 	}
 
 	/**

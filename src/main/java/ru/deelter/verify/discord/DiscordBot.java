@@ -47,7 +47,7 @@ public class DiscordBot {
     }
 
     public static void warn(@NotNull MessageChannel channel, String message) {
-        MessageEmbed warn = new EmbedBuilder().setDescription(Config.MSG_DS_ACCOUNT_EXISTS).setColor(Color.red).build();
+        MessageEmbed warn = new EmbedBuilder().setDescription(message).setColor(Color.red).build();
         channel.sendMessageEmbeds(warn).queue(msg -> msg.delete().queueAfter(4, TimeUnit.SECONDS));
     }
 

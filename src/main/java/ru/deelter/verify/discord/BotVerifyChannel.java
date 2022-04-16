@@ -29,7 +29,7 @@ public class BotVerifyChannel extends ListenerAdapter {
         event.getMessage().delete().queue();
         String name = event.getMessage().getContentRaw();
 
-        Player player = Bukkit.getPlayerExact(name);
+        Player player = Bukkit.getPlayer(name);
         if (player == null || !player.isOnline()) {
             DiscordBot.warn(channel, Config.MSG_DS_PLAYER_OFFLINE);
             return;
