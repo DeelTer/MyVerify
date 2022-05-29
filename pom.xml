@@ -6,7 +6,7 @@
 
     <groupId>ru.deelter.verify</groupId>
     <artifactId>MyVerify</artifactId>
-    <version>7.2</version>
+    <version>8.0</version>
     <packaging>jar</packaging>
 
     <name>MyVerify</name>
@@ -76,7 +76,7 @@
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
-            <version>4.3.0_324</version>
+            <version>5.0.0-alpha.12</version>
             <exclusions>
                 <exclusion>
                     <groupId>club.minnced</groupId>
@@ -88,8 +88,14 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>5.0.0</version>
-            <scope>provided</scope>
+            <version>5.0.1</version>
+        </dependency>
+
+        <!-- Google cache  -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
         </dependency>
     </dependencies>
 </project>

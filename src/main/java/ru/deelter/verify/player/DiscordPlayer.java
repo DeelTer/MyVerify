@@ -12,26 +12,24 @@ import org.jetbrains.annotations.Nullable;
 import ru.deelter.verify.MyVerify;
 import ru.deelter.verify.api.actions.DiscordBanEvent;
 import ru.deelter.verify.api.actions.DiscordNameChangeEvent;
-import ru.deelter.verify.database.DiscordDatabase;
-import ru.deelter.verify.discord.DiscordBot;
+import ru.deelter.verify.discord.VerifyBot;
 
 import java.util.*;
 
 public class DiscordPlayer {
 
-	private static final Guild GUILD = DiscordBot.getGuild();
+	private static final Guild GUILD = VerifyBot.getGuild();
 
-	private static final Map<UUID, DiscordPlayer> PLAYERS = new HashMap<>();
 	private final UUID uuid;
 	private String ip;
+	private long id;
+	private long time;
 
-	private long id, time;
-
-	public DiscordPlayer(@NotNull UUID uuid) {
+	protected DiscordPlayer(@NotNull UUID uuid) {
 		this.uuid = uuid;
 	}
 
-	public DiscordPlayer(@NotNull Player player) {
+	protected DiscordPlayer(@NotNull Player player) {
 		this(player.getUniqueId());
 	}
 
@@ -43,11 +41,11 @@ public class DiscordPlayer {
 	}
 
 	@NotNull
-	public UUID getUUID() {
+	public UUID getMinecraftId() {
 		return uuid;
 	}
 
-	public long getId() {
+	public long getDiscordId() {
 		return id;
 	}
 
@@ -91,8 +89,7 @@ public class DiscordPlayer {
 	}
 
 	public void unlink() {
-		DiscordDatabase.deletePlayer(uuid);
-		this.unregister();
+		DiscordPlayerManager.delete(uuid);
 	}
 
 	/**
@@ -141,13 +138,14 @@ public class DiscordPlayer {
 	}
 
 	public void setRole(@NotNull String roleId, boolean add) {
-		if (!isValid(getMember())) return;
+		Member member = getMember();
+		if (member == null) return;
 
 		Role role = GUILD.getRoleById(roleId);
 		if (role == null) return;
 
-		if (add) GUILD.addRoleToMember(id, role).queue();
-		else GUILD.removeRoleFromMember(id, role).queue();
+		if (add) GUILD.addRoleToMember(member, role).queue();
+		else GUILD.removeRoleFromMember(member, role).queue();
 	}
 
 	/**
@@ -175,7 +173,7 @@ public class DiscordPlayer {
 	 * @param message Message
 	 */
 	public void sendMessage(@NotNull MessageEmbed message) {
-		DiscordBot.getDiscordBot().openPrivateChannelById(id).queue(chat -> chat.sendMessage(message).queue());
+		VerifyBot.getJDA().openPrivateChannelById(id).queue(chat -> chat.sendMessageEmbeds(message).queue());
 	}
 
 	/**
@@ -191,26 +189,6 @@ public class DiscordPlayer {
 
 	private boolean isValid(@Nullable Member member) {
 		return member != null && !member.isOwner();
-	}
-
-	/** Get Discord player by PLAYER */
-	public static DiscordPlayer get(@NotNull Player player) {
-		return get(player.getUniqueId());
-	}
-
-	/** Get Discord player by UUID */
-	public static DiscordPlayer get(@NotNull UUID uuid) {
-		return PLAYERS.containsKey(uuid) ? PLAYERS.get(uuid) : new DiscordPlayer(uuid).register();
-	}
-
-	/** Register Discord player */
-	public DiscordPlayer register() {
-		PLAYERS.putIfAbsent(uuid, this);
-		return this;
-	}
-
-	public void unregister() {
-		PLAYERS.remove(uuid);
 	}
 
 	@Override

@@ -10,16 +10,18 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import ru.deelter.verify.Config;
+import ru.deelter.verify.player.DiscordPlayerManager;
 import ru.deelter.verify.player.PlayerApplicationManager;
 import ru.deelter.verify.utils.Colors;
 import ru.deelter.verify.utils.Console;
 import ru.deelter.verify.player.DiscordPlayer;
 
-public class BotVerifyChannel extends ListenerAdapter {
+public class VerifyChannelListener extends ListenerAdapter {
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
+    public void onMessageReceived(@NotNull MessageReceivedEvent event) {
         User author = event.getAuthor();
         if (author.isBot()) return;
 
@@ -31,18 +33,18 @@ public class BotVerifyChannel extends ListenerAdapter {
 
         Player player = Bukkit.getPlayer(name);
         if (player == null || !player.isOnline()) {
-            DiscordBot.warn(channel, Config.MSG_DS_PLAYER_OFFLINE);
+            VerifyBot.warn(channel, Config.MSG_DS_PLAYER_OFFLINE);
             return;
         }
 
-        DiscordPlayer dPlayer = DiscordPlayer.get(player);
+        DiscordPlayer dPlayer = DiscordPlayerManager.getByPlayer(player);
         if (dPlayer.isLinked()) {
-            DiscordBot.warn(channel, Config.MSG_DS_ACCOUNT_EXISTS);
+            VerifyBot.warn(channel, Config.MSG_DS_ACCOUNT_EXISTS);
             return;
         }
 
         if (PlayerApplicationManager.has(player.getUniqueId())) {
-            DiscordBot.warn(channel, Config.MSG_DS_APPLICATION_EXISTS);
+            VerifyBot.warn(channel, Config.MSG_DS_APPLICATION_EXISTS);
             return;
         }
 
@@ -57,7 +59,7 @@ public class BotVerifyChannel extends ListenerAdapter {
         text.addExtra(button);
         player.sendMessage(text);
 
-        DiscordBot.notify(channel, Config.MSG_DS_APPLICATION_CREATED);
+        VerifyBot.notify(channel, Config.MSG_DS_APPLICATION_CREATED);
         Console.debug("Игрок " + player.getName() + " создал заявку на верификацию");
     }
 }

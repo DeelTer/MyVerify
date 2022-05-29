@@ -30,7 +30,7 @@ public class DiscordEvent extends Event {
      * @return Discord ID
      */
     public long getId() {
-        return player.getId();
+        return player.getDiscordId();
     }
 
     /**

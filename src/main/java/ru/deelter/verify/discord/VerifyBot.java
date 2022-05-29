@@ -17,7 +17,7 @@ import javax.security.auth.login.LoginException;
 import java.awt.*;
 import java.util.concurrent.TimeUnit;
 
-public class DiscordBot {
+public class VerifyBot {
 
     private static JDA discordBot;
     private static Guild guild;
@@ -27,7 +27,7 @@ public class DiscordBot {
                 .disableCache(CacheFlag.EMOTE, CacheFlag.VOICE_STATE)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setActivity(Activity.playing("vk.com/deelter"))
-                .addEventListeners(new BotVerifyChannel())
+                .addEventListeners(new VerifyChannelListener())
                 .setEnabledIntents(GatewayIntent.getIntents(GatewayIntent.ALL_INTENTS));
         try {
             discordBot = builder.build();
@@ -38,7 +38,7 @@ public class DiscordBot {
         guild = discordBot.getGuildById(Config.GUILD_ID);
     }
 
-    public static JDA getDiscordBot() {
+    public static JDA getJDA() {
         return discordBot;
     }
 
