@@ -23,7 +23,7 @@ public final class MyVerify extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Config.load();
+        Config.load(this);
         VerifyBot.load();
 
         PluginManager pm = Bukkit.getPluginManager();

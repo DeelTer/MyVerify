@@ -4,7 +4,7 @@
 #                                       #
 #########################################
 
-#Contact with me:
+#Contact me:
 #
 #VK: vk.com/deelter
 #DISCORD: DeelTer#4782
@@ -13,20 +13,20 @@
 
 settings:
   bot:
-    guild: "GUILD_ID"
-    token: "TOKEN"
+    guild: "guildIdHere"
+    token: "botTokenHere"
 
-  #Type your channels id's here
+  # Type your channels id's here
   channels: #Id's
-    verify: "805152627271925810"
-    logs: ""
+    verify: "verifyChannelId"
+    logs: "logsChannelId"
 
-  #Nickname that will be issued after verification
+  # Nickname that will be issued after verification
   nickname:
     enable: false
     updater-enable: true
 
-  #Roles that will be issued after verification
+  # Roles that will be issued after verification
   roles:
     enable: true
     id:

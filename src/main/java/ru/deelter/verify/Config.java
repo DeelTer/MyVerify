@@ -2,6 +2,7 @@ package ru.deelter.verify;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jetbrains.annotations.NotNull;
 import ru.deelter.verify.utils.Colors;
 
 import java.util.ArrayList;
@@ -40,13 +41,14 @@ public class Config {
     public static boolean DEBUG;
 
     public static void reload() {
-        MyVerify.getInstance().reloadConfig();
+        MyVerify instance = MyVerify.getInstance();
+        instance.reloadConfig();
         Colors.getColors().clear();
-        load();
+        load(instance);
     }
 
-    public static void load() {
-        MyVerify.getInstance().reloadConfig();
+    public static void load(@NotNull MyVerify instance) {
+        instance.reloadConfig();
 
         FileConfiguration config = MyVerify.getInstance().getConfig();
         DEBUG = config.getBoolean("debug");

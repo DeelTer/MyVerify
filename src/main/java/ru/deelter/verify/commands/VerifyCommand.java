@@ -86,7 +86,8 @@ public class VerifyCommand implements CommandExecutor, TabCompleter {
             }
 
             String ip = Objects.requireNonNull(player.getAddress()).getHostName();
-            long id = PlayerApplicationManager.get(uuid), time = System.currentTimeMillis();
+            long id = PlayerApplicationManager.get(uuid);
+            long time = System.currentTimeMillis();
 
             DiscordPlayer dPlayer = DiscordPlayerManager.getByUuid(uuid);
             dPlayer.setTime(time);

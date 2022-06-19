@@ -52,7 +52,7 @@ public class VerifyBot {
     }
 
     public static void notify(@NotNull MessageChannel channel, String message) {
-        MessageEmbed notify = new EmbedBuilder().setDescription(Config.MSG_DS_ACCOUNT_EXISTS).setColor(Color.green).build();
+        MessageEmbed notify = new EmbedBuilder().setDescription(message).setColor(Color.green).build();
         channel.sendMessageEmbeds(notify).queue(msg -> msg.delete().queueAfter(4, TimeUnit.SECONDS));
     }
 }

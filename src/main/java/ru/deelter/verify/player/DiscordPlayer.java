@@ -19,7 +19,6 @@ import java.util.*;
 public class DiscordPlayer {
 
 	private static final Guild GUILD = VerifyBot.getGuild();
-
 	private final UUID uuid;
 	private String ip;
 	private long id;
@@ -143,7 +142,6 @@ public class DiscordPlayer {
 
 		Role role = GUILD.getRoleById(roleId);
 		if (role == null) return;
-
 		if (add) GUILD.addRoleToMember(member, role).queue();
 		else GUILD.removeRoleFromMember(member, role).queue();
 	}

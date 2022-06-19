@@ -12,6 +12,6 @@ public class DiscordPlayerCacheRemover implements RemovalListener<UUID, DiscordP
 		UUID uuid = notification.getKey();
 		DiscordPlayer player = notification.getValue();
 		if (uuid == null || player == null) return;
-		DiscordDatabase.save(player);
+		if (player.isLinked()) DiscordDatabase.save(player);
 	}
 }
